@@ -18,8 +18,8 @@ This project was inspired by [PaulLockett/CodeSignal_Practice_Industry_Coding_Fr
 
 ```bash
 # Clone the repository
-git clone <repo-url>
-cd interview_playground
+git clone https://github.com/Anthony-Lionetti/claude-code-signal-sandbox.git
+cd claude-code-signal-sandbox
 
 # Install dependencies
 uv sync
