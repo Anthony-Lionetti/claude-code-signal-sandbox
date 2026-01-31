@@ -47,27 +47,9 @@ Apply cashback based on total spending (withdrawals + outgoing transfers).
 
 **Note:** Uses integer division (floor). Example: 10% of 33 = 3 (not 3.3)
 
-## Data Structure Hints
-
-Add a queue for scheduled payments:
-
-```python
-from collections import deque
-
-self.scheduled = deque()        # Queue of (from_id, to_id, amount)
-self.schedule_ids = set()       # Track used schedule IDs
-```
-
-Or use a list:
-
-```python
-self.scheduled = []             # List of {"from": str, "to": str, "amount": int, "id": str}
-self.schedule_ids = set()
-```
-
 ## Key Considerations
 
-1. **FIFO Order**: First scheduled = first processed
+1. **Order**: First scheduled = first processed
 2. **Clear Queue**: All payments are removed after processing (even failed ones)
 3. **Reuse `transfer()`**: When processing payments, you can reuse your transfer logic
 4. **Track Spending**: You should already have this from Level 3's `top_spenders()`
@@ -111,17 +93,3 @@ bank.get_balance("bob")    # 60
 bank.apply_cashback("alice", 10)  # 6 (10% of 60)
 bank.get_balance("alice")         # 46
 ```
-
-## Congratulations!
-
-If you've made it through all 4 levels, you've built a complete banking system with:
-
-- Account management
-- Deposits and withdrawals
-- Transfers
-- Transaction history
-- Spending reports
-- Scheduled payments
-- Cashback rewards
-
-This covers the typical scope and progression of a CodeSignal ICA.

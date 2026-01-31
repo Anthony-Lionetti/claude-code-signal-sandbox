@@ -38,19 +38,6 @@ Withdraw money from an account.
 | Zero or negative amount         | `None`      |
 | Insufficient funds              | `None`      |
 
-## Data Structure Hints
-
-Think about what you need to store:
-
-- A way to track which accounts exist
-- A way to store each account's balance
-
-A simple dictionary works well:
-
-```python
-self.accounts = {}  # account_id -> balance
-```
-
 ## Edge Cases to Handle
 
 - Duplicate account creation

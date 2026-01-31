@@ -46,22 +46,6 @@ You'll need to modify your Level 1 and Level 2 code to track transactions:
 4. **Update `transfer()`** to record transactions for both accounts
 5. **Track total outgoing amounts** per account for `top_spenders()`
 
-## Data Structure Hints
-
-Expand your data model:
-
-```python
-self.accounts = {}       # account_id -> balance
-self.history = {}        # account_id -> list of transaction strings
-self.outgoing = {}       # account_id -> total outgoing amount
-```
-
-Or use a more structured approach:
-
-```python
-self.accounts = {}  # account_id -> {"balance": int, "history": [], "outgoing": int}
-```
-
 ## Edge Cases to Handle
 
 - Empty transaction history (new account)
