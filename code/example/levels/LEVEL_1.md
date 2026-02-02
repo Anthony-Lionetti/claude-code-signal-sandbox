@@ -38,14 +38,6 @@ Withdraw money from an account.
 | Zero or negative amount         | `None`      |
 | Insufficient funds              | `None`      |
 
-## Edge Cases to Handle
-
-- Duplicate account creation
-- Deposits/withdrawals on nonexistent accounts
-- Zero or negative amounts
-- Withdrawing more than the balance
-- Withdrawing the exact balance (should succeed, leaving 0)
-
 ## Run Tests
 
 ```bash

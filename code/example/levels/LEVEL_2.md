@@ -40,14 +40,6 @@ Transfer money between two accounts.
    - Not transferring to self
    - Sufficient funds
 
-## Edge Cases to Handle
-
-- Transferring to/from nonexistent accounts
-- Transferring to the same account (self-transfer)
-- Transferring more than available balance
-- Zero or negative transfer amounts
-- Ensure balances are unchanged on failed transfers
-
 ## Run Tests
 
 ```bash

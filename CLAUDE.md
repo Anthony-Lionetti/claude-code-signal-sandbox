@@ -32,12 +32,12 @@ Good scenarios are domain-agnostic and relatable:
 
 ### 2. Design 4 Progressive Levels
 
-| Level | Time      | Complexity    | Typical Features                    |
-| ----- | --------- | ------------- | ----------------------------------- |
-| 1     | 10-15 min | Basic CRUD    | Create, read, simple validation     |
-| 2     | 20-30 min | Relationships | Transfers, lookups between entities |
-| 3     | 30-60 min | Aggregation   | History, reports, sorting, top-N    |
-| 4     | 30-60 min | Advanced      | Scheduling, callbacks, dependencies |
+| Level | Time      | Complexity      | Typical Features                     |
+| ----- | --------- | --------------- | ------------------------------------ |
+| 1     | 10-15 min | Basic CRUD      | Create, read, simple validation      |
+| 2     | 20-30 min | Filters / Scans | Transfers, lookups between entities  |
+| 3     | 30-60 min | Timebased Ops   | History, Scheduling, Priority        |
+| 4     | 30-60 min | Advanced        | Compression, callbacks, dependencies |
 
 **Key principle:** Each level MUST build on the previous. Code from Level 1 should be used in Level 4.
 
@@ -259,6 +259,13 @@ When the user asks for a "live interview", or a "mock interview", YOU become the
    - What they did well
    - Areas for improvement
    - Specific feedback on: problem solving, code quality, communication, testing
+
+### Example Questions / Problems (Progressive Levels 1-4)
+
+- Async/concurrent programming
+- Scaling a function to handle high throughput (100K+ requests/sec)
+- Practical string/data parsing
+- Incremental complexity with follow-up questions
 
 ### Interviewer Behaviors
 

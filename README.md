@@ -1,6 +1,8 @@
-# ICA Style Practice Playground
+# Cluade Code Interviewer
 
-A practice environment for CodeSignal Industry Coding Assessment (ICA) style problems, powered by Claude Code.
+A practice environment for CodeSignal Industry Coding Assessment (ICA), or 4 level progression style coding problems.
+
+> All powered by Claude Code :)
 
 ## Inspiration
 
@@ -34,20 +36,15 @@ interview_playground/
 ├── Makefile                   # Test commands
 ├── pyproject.toml             # Python dependencies
 │
-└── ica_practice/
+└── code/
     ├── simulation.py          # Main problem file (implement here)
     ├── test_simulation.py     # Test suite by level
     │
     ├── levels/                # Level-specific documentation
-    │   ├── LEVEL_1.md
-    │   ├── LEVEL_2.md
-    │   ├── LEVEL_3.md
-    │   └── LEVEL_4.md
-    │
-    └── mini_problems/         # Smaller focused practice problems
-        ├── coffee_shop.py
-        ├── task_scheduler.py
-        └── ...
+        ├── LEVEL_1.md
+        ├── LEVEL_2.md
+        ├── LEVEL_3.md
+        └── LEVEL_4.md
 ```
 
 ## Running Tests
@@ -67,24 +64,25 @@ make test-all
 
 ## How to Practice
 
-### Option 1: Self-Paced Practice
+### Option 1: Self-Paced Practice (~90 mins)
 
-1. Open `ica_practice/levels/LEVEL_1.md` to read the requirements
-2. Implement the methods in `ica_practice/simulation.py`
+1. Open `code/levels/LEVEL_1.md` to read the requirements
+2. Implement the methods in `code/simulation.py`
 3. Run `make test-1` to check your solution
 4. Move to the next level when all tests pass
 5. Repeat for levels 2, 3, and 4
 
 **Tip:** Set a 90-minute timer to simulate real ICA conditions.
 
-### Option 2: Mini Problems
+### Option 2: Single File, Coder Pad Live interview
 
-For focused practice on specific concepts:
+1. Open `code/levels/LEVEL_1.md` to read the requirements
+2. Implement the methods in `code/simulation.py`
+3. Run `make test-1` to check your solution
+4. Move to the next level when all tests pass
+5. Repeat for levels 2, 3, and 4
 
-1. Choose a mini problem in `ica_practice/mini_problems/`
-2. Read the corresponding `.md` file for requirements
-3. Implement the solution
-4. Run the appropriate `make test-*` command
+**Tip:** Set a 90-minute timer to simulate real ICA conditions.
 
 ## Using Claude Code
 

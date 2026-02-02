@@ -54,16 +54,6 @@ Apply cashback based on total spending (withdrawals + outgoing transfers).
 3. **Reuse `transfer()`**: When processing payments, you can reuse your transfer logic
 4. **Track Spending**: You should already have this from Level 3's `top_spenders()`
 
-## Edge Cases to Handle
-
-- Duplicate schedule IDs
-- Scheduling without sufficient funds (allowed - checked at execution)
-- Processing an empty queue
-- Processing same queue twice (should return 0 second time)
-- Cashback with zero spending
-- Cashback percentage edge cases (0%, 100%, negative, >100)
-- Integer division for cashback calculation
-
 ## Run Tests
 
 ```bash

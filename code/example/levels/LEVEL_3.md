@@ -46,14 +46,6 @@ You'll need to modify your Level 1 and Level 2 code to track transactions:
 4. **Update `transfer()`** to record transactions for both accounts
 5. **Track total outgoing amounts** per account for `top_spenders()`
 
-## Edge Cases to Handle
-
-- Empty transaction history (new account)
-- Tied spending amounts (alphabetical tiebreaker)
-- `n` greater than number of accounts
-- Failed transactions should NOT be recorded
-- Accounts with zero spending should still appear in `top_spenders`
-
 ## Run Tests
 
 ```bash
