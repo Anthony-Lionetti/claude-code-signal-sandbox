@@ -31,9 +31,9 @@ uv sync
 
 ```
 interview_playground/
-├── CLAUDE.md                  # Instructions for Claude Code
+├── CLAUDE.md                  # Instructions for Claude Code to make a sample assessment
 ├── README.md                  # This file
-├── Makefile                   # Test commands
+├── Makefile                   # Test commands (I.E. test-1, test-2, test-<level>)
 ├── pyproject.toml             # Python dependencies
 │
 └── code/
