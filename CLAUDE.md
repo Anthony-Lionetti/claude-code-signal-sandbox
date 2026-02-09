@@ -15,6 +15,9 @@ This repository generates CodeSignal ICA-style practice problems that test **dat
 - ❌ 5+ simple dictionary operations per level
 - ❌ Methods that can all be solved with `dict` + basic loops
 - ❌ No performance requirements
+
+**Patterns to adhear to:**
+
 - ✅ 2-3 methods that require binary search, tries, heaps, etc.
 - ✅ Explicit O(log n) or O(1) requirements
 - ✅ Level 1 setup that makes Level 4 possible (or impossible if wrong)
@@ -36,7 +39,7 @@ code/
 
 Each archetype has a **forcing function**: a constraint that makes naive solutions fail.
 
-**15 archetypes covering common ICA patterns:**
+**16 archetypes covering common ICA patterns:**
 
 | #   | Archetype                | Core DSA                              | Forcing Function                              |
 | --- | ------------------------ | ------------------------------------- | --------------------------------------------- |
@@ -59,343 +62,16 @@ Each archetype has a **forcing function**: a constraint that makes naive solutio
 
 ---
 
-### 1. Time-Series Key-Value Store
-
-**Forcing function:** `get(key, timestamp)` must return value at or before timestamp in O(log n)
-
-| Level | Methods                                                   | DSA Required                                      |
-| ----- | --------------------------------------------------------- | ------------------------------------------------- |
-| 1     | `set(key, value, timestamp)`, `get(key, timestamp)`       | Binary search on sorted timestamps per key        |
-| 2     | `get_range(key, t_start, t_end)` → list of values         | Binary search for range bounds                    |
-| 3     | `delete_before(key, timestamp)`                           | Efficient deletion while maintaining sorted order |
-| 4     | `compact(max_entries_per_key)` keeping only most recent N | Merge/cleanup across all keys                     |
-
-**Why it's hard:** Naive dict-of-lists requires O(n) scan. Must use `bisect` module or maintain sorted structure.
-
----
-
-### 2. Filesystem with Path Operations
-
-**Forcing function:** `list_files(prefix)` and `autocomplete(partial_path)` in O(k) where k = results
-
-| Level | Methods                                         | DSA Required             |
-| ----- | ----------------------------------------------- | ------------------------ |
-| 1     | `create(path)`, `exists(path)`                  | Trie structure for paths |
-| 2     | `list(directory)` → immediate children          | Trie traversal           |
-| 3     | `find(prefix)` → all paths starting with prefix | DFS from trie node       |
-| 4     | `delete(path)` with cascade, `move(src, dst)`   | Subtrie manipulation     |
-
-**Why it's hard:** Naive dict requires O(n) prefix scan. Trie gives O(prefix_len + results).
-
----
-
-### 3. Task Scheduler with Dependencies
-
-**Forcing function:** `get_next_task()` must respect dependencies and priorities in O(log n)
-
-| Level | Methods                                         | DSA Required                          |
-| ----- | ----------------------------------------------- | ------------------------------------- |
-| 1     | `add_task(id, priority)`, `get_next_task()`     | Heap for priority queue               |
-| 2     | `add_dependency(task_id, depends_on_id)`        | Graph + in-degree tracking            |
-| 3     | `complete_task(id)` → unblocks dependents       | Update heap when dependencies resolve |
-| 4     | `get_execution_order()` → full topological sort | Kahn's algorithm or DFS               |
-
-**Why it's hard:** Must combine heap (priority) with graph (dependencies). Neither alone works.
-
----
-
-### 4. LRU Cache with Expiration
-
-**Forcing function:** `get()` and `put()` must be O(1), TTL expiration on access
-
-| Level | Methods                                         | DSA Required                                |
-| ----- | ----------------------------------------------- | ------------------------------------------- |
-| 1     | `put(key, value)`, `get(key)` with LRU eviction | OrderedDict or HashMap + Doubly Linked List |
-| 2     | Add `capacity` limit, evict least recent        | Move-to-end on access                       |
-| 3     | Add `ttl` parameter, expire on access           | Store timestamps, check on get              |
-| 4     | `cleanup()` batch removal of expired, `stats()` | Iterate without breaking O(1) ops           |
-
-**Why it's hard:** Dict alone can't track recency order. List alone can't do O(1) lookup.
-
----
-
-### 5. Range Query System (Interval-based)
-
-**Forcing function:** `query_overlap(start, end)` must be better than O(n)
-
-| Level | Methods                                                 | DSA Required                                  |
-| ----- | ------------------------------------------------------- | --------------------------------------------- |
-| 1     | `add_interval(id, start, end)`, `point_query(x)`        | Sorted list + binary search, or interval tree |
-| 2     | `query_overlap(start, end)` → all overlapping intervals | Efficient range search                        |
-| 3     | `remove_interval(id)`                                   | Maintain sorted structure                     |
-| 4     | `merge_overlapping()` → consolidate intervals           | Sweep line algorithm                          |
-
-**Why it's hard:** Naive O(n) scan fails for large datasets. Need sorted structure or tree.
-
----
-
-### 6. Autocomplete / Search Suggestions
-
-**Forcing function:** `suggest(prefix, k)` must return top-k by frequency in O(prefix + k log k)
-
-| Level | Methods                                            | DSA Required                     |
-| ----- | -------------------------------------------------- | -------------------------------- |
-| 1     | `record(word)`, `suggest(prefix)` → all matches    | Trie with word storage           |
-| 2     | Track frequency, return sorted by frequency        | Store counts at trie nodes       |
-| 3     | `suggest(prefix, k)` → top k only                  | Heap for top-k selection         |
-| 4     | `delete(word)`, `suggest_fuzzy(prefix, max_edits)` | Trie manipulation, edit distance |
-
----
-
-### 7. Leaderboard / Ranking System
-
-**Forcing function:** `get_rank(player_id)` must be O(log n), not O(n)
-
-| Level | Methods                                       | DSA Required                                |
-| ----- | --------------------------------------------- | ------------------------------------------- |
-| 1     | `add_score(player_id, score)`, `top_k(k)`     | Heap or sorted structure                    |
-| 2     | `get_rank(player_id)` → 1-indexed rank        | Need ordered set with indexing (SortedList) |
-| 3     | `get_players_in_range(min_rank, max_rank)`    | Range query on sorted structure             |
-| 4     | `reset_scores()`, `get_percentile(player_id)` | Maintain count for percentile calc          |
-
-**Why it's hard:** Dict gives O(n) rank lookup. Need `sortedcontainers.SortedList` or similar.
-
----
-
-### 8. Rate Limiter
-
-**Forcing function:** `is_allowed(user_id, timestamp)` in O(log n) with sliding window
-
-| Level | Methods                                            | DSA Required                        |
-| ----- | -------------------------------------------------- | ----------------------------------- |
-| 1     | `is_allowed(user_id, timestamp)` with fixed window | Dict + deque per user               |
-| 2     | Sliding window (last N seconds)                    | Binary search to remove old entries |
-| 3     | Multiple rate limits (e.g., 10/min AND 100/hour)   | Multiple windows per user           |
-| 4     | `get_stats(user_id)` → usage patterns              | Efficient aggregation               |
-
----
-
-### 9. Banking / Transaction System
-
-**Forcing function:** `transfer()` must be atomic, `get_top_k_by_activity()` in O(k log k), `rollback()` requires transaction log
-
-| Level | Methods                                                                        | DSA Required                                               |
-| ----- | ------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| 1     | `create_account(id)`, `deposit(id, amount)`, `withdraw(id, amount)` → bool     | Dict with validation (overdraft protection)                |
-| 2     | `transfer(from_id, to_id, amount)` → bool, `get_balance(id)`                   | Atomic operations (both succeed or both fail)              |
-| 3     | `get_top_k_by_activity(k)` → list of (id, tx_count), `get_history(id)`         | Heap for top-k, transaction log per account                |
-| 4     | `rollback(transaction_id)` → bool, `schedule_transfer(from, to, amount, time)` | Transaction IDs, scheduled queue with timestamp processing |
-
-**Why it's hard:**
-
-- Level 2: Transfer must handle insufficient funds atomically (don't deduct if deposit fails)
-- Level 3: Naive sort is O(n log n); heap gives O(n + k log k)
-- Level 4: Rollback requires storing enough state to reverse; scheduled transfers need time-based processing
-
----
-
-### 10. In-Memory KV Database with Scans
-
-**Forcing function:** `scan(prefix)` in O(prefix + results), `scan_by_value_range()` requires secondary index
-
-| Level | Methods                                                                | DSA Required                                  |
-| ----- | ---------------------------------------------------------------------- | --------------------------------------------- |
-| 1     | `set(key, value)`, `get(key)`, `delete(key)`                           | Dict for O(1) basic ops                       |
-| 2     | `scan(prefix)` → all keys starting with prefix, `keys()`               | Trie for prefix scan OR sorted keys + bisect  |
-| 3     | `set_with_ttl(key, value, ttl)`, `get(key, current_time)`              | Lazy expiration + optional cleanup structure  |
-| 4     | `scan_by_value_range(min_val, max_val)` → keys where min ≤ value ≤ max | Secondary index (sorted by value) with bisect |
-
-**Why it's hard:**
-
-- Level 2: Dict keys don't support prefix scan efficiently; need trie or sorted structure
-- Level 3: TTL requires timestamp tracking; lazy vs eager expiration tradeoff
-- Level 4: Secondary index is a separate sorted structure mapping value→keys
-
-**Key insight:** This is different from Time-Series KV — here we're scanning by key prefix and value ranges, not by timestamp.
-
----
-
-### 11. Constrained File Cache
-
-**Forcing function:** `put()` with size-based eviction in O(log n), `get_files_by_tag()` requires inverted index
-
-| Level | Methods                                                                                            | DSA Required                                 |
-| ----- | -------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| 1     | `put(filename, size)`, `get(filename)` → size, cache has `max_capacity`                            | Dict + track total size, LRU or LFU eviction |
-| 2     | `put(filename, size, tags: List[str])`, `get_files_by_tag(tag)`                                    | Inverted index: tag → set of filenames       |
-| 3     | `evict_lru(bytes_needed)` → list of evicted files, `pin(filename)` (pinned files can't be evicted) | Separate tracking for pinned vs unpinned     |
-| 4     | `get_stats()` → hit rate, miss rate, `defragment()` → compact by removing gaps                     | Access tracking, size management             |
-
-**Why it's hard:**
-
-- Level 1: Must track total size and evict when full; eviction order matters
-- Level 2: Inverted index for tag lookups; must update index on eviction
-- Level 3: Pinned files complicate eviction; may need to skip pinned items
-- Level 4: Hit/miss tracking requires counting gets; defragment is conceptual reorganization
-
-**Eviction policies to know:**
-
-- **LRU:** Evict least recently used (OrderedDict)
-- **LFU:** Evict least frequently used (dict + heap or frequency buckets)
-- **Size-based:** Evict largest or smallest first (heap by size)
-
----
-
-### 12. Cloud Database Simulation (Distributed KV)
-
-**Forcing function:** `get()` with consistency levels, `rebalance()` requires consistent hashing understanding
-
-| Level | Methods                                                                             | DSA Required                                         |
-| ----- | ----------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| 1     | `put(key, value)`, `get(key)`, data distributed across N nodes via `hash(key) % N`  | Dict per node, hash-based routing                    |
-| 2     | `add_node()`, `remove_node()` with key redistribution                               | Track which keys moved; naive rehash is O(all keys)  |
-| 3     | `put_with_replication(key, value, replicas=3)`, `get_with_quorum(key, min_nodes=2)` | Replicate to N consecutive nodes; read from multiple |
-| 4     | `get_node_stats()` → keys per node, `simulate_failure(node_id)` → reroute reads     | Handle node failures gracefully, detect hot spots    |
-
-**Why it's hard:**
-
-- Level 2: Adding/removing nodes with simple modulo causes massive redistribution; consistent hashing minimizes movement
-- Level 3: Replication means writes go to multiple nodes; quorum reads check consistency
-- Level 4: Failure handling requires fallback routing
-
-**Consistent Hashing insight:**
-
-```python
-# Simple modulo (bad): adding node moves ~100% of keys
-node = hash(key) % num_nodes
-
-# Consistent hashing (good): adding node moves ~1/N of keys
-# Use a ring with virtual nodes
-```
-
----
-
-### 13. Inventory Management with Reservations
-
-**Forcing function:** `reserve()` must be atomic with expiration, `fulfill()` must respect reservation time
-
-| Level | Methods                                                                                                        | DSA Required                                        |
-| ----- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| 1     | `add_item(sku, quantity)`, `get_quantity(sku)` → available count                                               | Dict with quantity tracking                         |
-| 2     | `reserve(sku, quantity, reservation_id)` → bool, `cancel_reservation(reservation_id)`                          | Separate reserved vs available counts               |
-| 3     | `reserve_with_expiry(sku, qty, res_id, expires_at)`, `fulfill(reservation_id, current_time)`                   | Expiration queue, process expired before operations |
-| 4     | `get_low_stock(threshold)` → list of skus, `reserve_bundle([(sku, qty), ...], res_id)` → bool (all or nothing) | Bundle atomicity: all items must be available       |
-
-**Why it's hard:**
-
-- Level 2: Must track `total`, `reserved`, `available` where `available = total - reserved`
-- Level 3: Expired reservations must return to available stock; need timestamp-ordered processing
-- Level 4: Bundle reservation is atomic — if any item lacks stock, entire reservation fails
-
----
-
-### 14. Message Queue System
-
-**Forcing function:** `consume()` must be O(1), `ack/nack` with redelivery requires careful state management
-
-| Level | Methods                                                                                            | DSA Required                                       |
-| ----- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| 1     | `publish(topic, message)`, `consume(topic)` → message or None                                      | Dict of deques per topic                           |
-| 2     | `consume(topic)` returns message_id, `ack(message_id)`, `nack(message_id)` → requeue               | Track in-flight messages separately                |
-| 3     | `consume_with_timeout(topic, timeout, current_time)` → auto-nack if not acked                      | Timestamp tracking for in-flight, expiration check |
-| 4     | `create_consumer_group(group_id, topic)`, `consume_group(group_id)` → round-robin across consumers | Partition messages across group members            |
-
-**Why it's hard:**
-
-- Level 2: Messages move from "pending" to "in-flight" to "acked"; nack puts back in pending
-- Level 3: Must track when each message was consumed; auto-expire on timeout
-- Level 4: Consumer groups require fair distribution and handling consumer failures
-
----
-
-### 15. Package Manager / Dependency Resolver
-
-**Forcing function:** `install(package)` must resolve transitive dependencies, detect cycles in O(V+E)
-
-| Level | Methods                                                                                               | DSA Required                                 |
-| ----- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| 1     | `register(package, dependencies: List[str])`, `is_registered(package)`                                | Dict storing adjacency list                  |
-| 2     | `install(package)` → list of packages in install order                                                | Topological sort (DFS or Kahn's algorithm)   |
-| 3     | `install(package)` returns False if cycle detected, `uninstall(package)` removes if no dependents     | Cycle detection, reverse dependency tracking |
-| 4     | `register_with_version(pkg, version, deps: List[(pkg, version_constraint)])`, `install(pkg, version)` | Version comparison, constraint satisfaction  |
-
-**Why it's hard:**
-
-- Level 2: Must return correct install order (dependencies before dependents)
-- Level 3: Cycle detection during topological sort; reverse deps for safe uninstall
-- Level 4: Version constraints (>=1.0, <2.0) require parsing and comparison
-
-**Topological sort pattern:**
-
-```python
-def install_order(self, package):
-    visited = set()
-    result = []
-    temp_mark = set()  # For cycle detection
-
-    def dfs(pkg):
-        if pkg in temp_mark:
-            raise CycleError()
-        if pkg in visited:
-            return
-        temp_mark.add(pkg)
-        for dep in self.dependencies[pkg]:
-            dfs(dep)
-        temp_mark.remove(pkg)
-        visited.add(pkg)
-        result.append(pkg)
-
-    dfs(package)
-    return result  # Dependencies come before dependents
-```
-
----
-
-### 16. Web Crawler
-
-**Forcing function:** `crawl()` must handle cycles (visited set), `crawl_concurrent()` must be thread-safe, domain filtering in O(1)
-
-| Level | Methods                                                                                | DSA Required                           |
-| ----- | -------------------------------------------------------------------------------------- | -------------------------------------- |
-| 1     | `crawl(seed_url)` → set of all reachable URLs                                          | BFS with deque + visited set           |
-| 2     | `crawl(seed_url, same_domain_only=True)` → filter to same domain                       | URL parsing, domain extraction         |
-| 3     | `crawl_concurrent(seed_url, max_workers)` → parallel fetching                          | Thread pool, thread-safe queue and set |
-| 4     | `crawl(seed_url, max_depth, rate_limit_per_second)` → depth-limited with rate limiting | Depth tracking, time-based throttling  |
-
-**Why it's hard:**
-
-- Level 1: Must avoid infinite loops on cyclic links; BFS ensures shortest path discovery
-- Level 2: URL normalization (fragments, trailing slashes, case) affects deduplication
-- Level 3: Multiple threads accessing shared `visited` set and `queue` requires locks or thread-safe structures
-- Level 4: Rate limiting requires timestamp tracking; depth requires passing depth through BFS
-
-**Given helper function (typical in ICA):**
-
-```python
-def get_links(url: str) -> List[str]:
-    """Fetches URL and returns all hyperlinks found in the document."""
-    # Provided by the test framework - you don't implement this
-    pass
-```
-
-**Key considerations:**
-
-- **Fragment handling:** `example.com/page#section` should equal `example.com/page`
-- **Normalization:** Trailing slashes, case sensitivity, protocol (http vs https)
-- **Domain extraction:** `https://sub.example.com/path` → domain is `sub.example.com`
-
----
-
 ## Level Design Guidelines
 
 | Level | Time      | Methods | Complexity                | What's Tested                         |
 | ----- | --------- | ------- | ------------------------- | ------------------------------------- |
-| 1     | 15-20 min | 2-3     | O(log n) or O(1) required | Core data structure choice            |
+| 1     | 15-20 min | 2-4     | O(log n) or O(1) required | Core data structure choice            |
 | 2     | 20-25 min | 2-3     | Builds on L1 structure    | Extending the data structure          |
 | 3     | 25-30 min | 1-2     | O(log n) compound ops     | Combining operations correctly        |
 | 4     | 25-30 min | 1-2     | Full system complexity    | Edge cases, cleanup, advanced queries |
 
-**Total: 6-10 methods across all levels** (not 15-20)
+**Total: 6-12 methods across all levels** (not 15-20)
 
 ## File Generation
 
@@ -442,6 +118,30 @@ class [SystemName]:
   - Binary search: exact match vs. floor value
   - Trie: empty prefix, single char, overlapping prefixes
   - Heap: ties in priority, empty heap
+
+**IMPORTANT!:**
+
+- Ensure the level is included in the unit test. So for level one, create names like `def test_level_1_<unit_test>(self):`
+- Ensure the existing `makefile` commands run the unit tests properly. See file below.
+
+  ```makefile
+  .PHONY: test-1 test-2 test-3 test-4 test-all
+
+  test-1:
+     uv run pytest code/test_simulation.py -k "level_1" -v
+
+  test-2:
+     uv run pytest code/test_simulation.py -k "level_1 or level_2" -v
+
+  test-3:
+     uv run pytest code/test_simulation.py -k "level_1 or level_2 or level_3" -v
+
+  test-4:
+     uv run pytest code/test_simulation.py -k "level_1 or level_2 or level_3 or level_4" -v
+
+  test-all:
+     uv run pytest code/test_simulation.py -v
+  ```
 
 ### LEVEL_X.md Template
 
@@ -1139,9 +839,3 @@ def compact(self, max_entries: int) -> int
 - For each key, keep only the most recent `max_entries` values
 - Returns total count of deleted entries
 - **Requirement: O(total_keys × log n)**
-
-### Expected Solution Insight
-
-- Store: `Dict[str, List[Tuple[int, int]]]` where inner list is sorted by timestamp
-- Use `bisect.bisect_right(timestamps, target) - 1` for floor queries
-- Level 1 choice determines if Level 3-4 are tractable

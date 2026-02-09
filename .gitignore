@@ -8,7 +8,6 @@ wheels/
 
 # Virtual environments
 .venv
-.claude
 .pytest_cache
 
 # Ignore generated ICA problems in code/, keep only __init__.py and example/
